@@ -1,0 +1,3 @@
+﻿  Sudoku.cpp
+h:\privateprojects\sudoku\sudoku\sudoku.cpp(140): warning C4101: 'cursorPos' :참조되지 않은 지역 변수입니다.
+  Sudoku.vcxproj -> H:\PrivateProjects\Sudoku\x64\Debug\Sudoku.exe
