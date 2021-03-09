@@ -17,14 +17,14 @@ std::vector<std::string> get_files_inDirectory(const std::string&, const std::st
 
 int main()
 {
-    std::string oldFolder = "C:/Users/warim/Desktop/YOLO_TRAIN/Yolo_mark-master/x64/Release/data/newimg/";
-    std::string newFolder = "C:/Users/warim/Desktop/YOLO_TRAIN/Yolo_mark-master/x64/Release/data/backup/";
+    std::string oldFolder = "C:/Users/warim/Desktop/YOLO_TRAIN/Yolo_mark-master/x64/Release/data/img/";
+    std::string newFolder = "C:/Users/warim/Desktop/YOLO_TRAIN/darknet-master/darknet-master/build/darknet/x64/20210305/data/";
 
     std::vector<std::string> fileNames = get_files_inDirectory(oldFolder, "*.txt");
 
     for (auto fn : fileNames)
     {
-        fs::rename(oldFolder + fn, newFolder + fn);
+        fs::copy(oldFolder + fn, newFolder + fn);
     };
 }
 
