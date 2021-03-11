@@ -17,16 +17,16 @@ std::vector<std::string> get_files_inDirectory(const std::string&, const std::st
 
 int main()
 {
-    std::string oldFolder = "C:/Users/warim/Desktop/YOLO_TRAIN/Yolo_mark-master/x64/Release/data/backup/";
-    std::string newFolder = "C:/Users/warim/Desktop/YOLO_TRAIN/Yolo_mark-master/x64/Release/data/newimg/";
+    std::string oldFolder = "C:/Users/warim/Desktop/YOLO_TRAIN/Yolov3Train/DataSet/Coco_Train_Truck_6126/";
+    std::string newFolder = "C:/Users/warim/Desktop/YOLO_TRAIN/Yolov3Train/DataSet/Coco_Train_Truck_6126_ChangeClassNum/";
 
     std::vector<std::string> fileNames = get_files_inDirectory(oldFolder, "*.txt");
 
     std::ifstream txtFileReader;
     std::ofstream txtFileWriter;
 
-    char oneRectangleLine[50];
-    std::string oneRectangleLineStr;
+    char readLine[50];
+    std::string readLineStr;
 
     char* context = nullptr;
 
@@ -45,34 +45,35 @@ int main()
 
         while (txtFileReader.peek() != EOF)
         {
-            std::getline(txtFileReader, oneRectangleLineStr);
+            std::getline(txtFileReader, readLineStr);
 
-            strcpy_s(oneRectangleLine, oneRectangleLineStr.c_str());
-            classNum = strtok_s(oneRectangleLine, " ", &context);
+            strcpy_s(readLine, readLineStr.c_str());
+            classNum = strtok_s(readLine, " ", &context);
             classNumStr = classNum;
 
             // std::cout << classNumStr << "\n";
+            /*
             if (classNumStr == "1") // person
             {
-                writeLine = "6" + oneRectangleLineStr.substr(1) + "\n"; // People
+                writeLine = "6" + readLineStr.substr(1) + "\n"; // People
                 txtFileWriter.write(writeLine.c_str(), writeLine.length());
             }
             else if (classNumStr == "3") // car
             {
-                writeLine = "4" + oneRectangleLineStr.substr(1) + "\n"; // Vehicle
+                writeLine = "4" + readLineStr.substr(1) + "\n"; // Vehicle
                 txtFileWriter.write(writeLine.c_str(), writeLine.length());
             }
             else if (classNumStr == "6") // bus
             {
-                writeLine = "4" + oneRectangleLineStr.substr(1) + "\n"; // Vehicle
+                writeLine = "4" + readLineStr.substr(1) + "\n"; // Vehicle
                 txtFileWriter.write(writeLine.c_str(), writeLine.length());
             }
-            else if (classNumStr == "8") // truck
+            else*/ if (classNumStr == "8") // truck
             {
-                writeLine = "11" + oneRectangleLineStr.substr(1) + "\n"; // Ex_truck
+                writeLine = "11" + readLineStr.substr(1) + "\n"; // Ex_truck
                 txtFileWriter.write(writeLine.c_str(), writeLine.length());
             }
-            else // else
+            else
             {
 
             }

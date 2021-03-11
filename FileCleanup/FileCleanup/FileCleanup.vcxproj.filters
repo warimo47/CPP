@@ -27,10 +27,16 @@
     <ClCompile Include="Rename.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="addName.cpp">
+    <ClCompile Include="AddName.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MoveFolderReadTrain.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckNoneTxtData.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TruckImageCopy.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
