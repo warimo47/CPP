@@ -39,5 +39,8 @@
     <ClCompile Include="TruckImageCopy.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="MakeTrainFile.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
