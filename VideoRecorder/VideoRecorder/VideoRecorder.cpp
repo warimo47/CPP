@@ -4,14 +4,19 @@
 #include <locale>
 #include <codecvt>
 #include <thread>
+#include <atomic>
+#include <string>
 
 #include "opencv2/opencv.hpp"
 #include "Windows.h"
 
-void VideoRecording(cv::String cvsVSA, cv::String cvsVFN);
+void VideoRecording(std::string _sVSA, std::string _sVFN, int _videoLengthSec, int _ICF);
+
+std::atomic<bool> isRecording = false;
 
 int main()
 {
+	int videoLengthSec = 3600;
     wchar_t excuteProgramPath[256] = { 0, };
 	GetModuleFileName(NULL, excuteProgramPath, sizeof(excuteProgramPath) / 2);
 	std::wstring excuteFolderPath = excuteProgramPath;
@@ -20,92 +25,122 @@ int main()
 	excuteFolderPath.erase(stTmp, 17);
 	std::wstring iniFilePath = excuteFolderPath + L"init.ini";
 
-	cv::String cvsVideoStreamingAddresses[12];
+	std::string sVideoStreamingAddresses;
 	wchar_t wcaReturn[1024] = { 0, };
 	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converterX;
 	
 	GetPrivateProfileStringW(L"Video streaming path", L"0", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[0] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"1", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[1] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"2", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[2] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"3", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[3] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"4", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[4] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"5", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[5] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"6", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[6] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"7", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[7] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"8", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[8] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"9", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[9] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"10", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[10] = converterX.to_bytes(wcaReturn);
-
-	GetPrivateProfileStringW(L"Video streaming path", L"11", L"", wcaReturn, 1024, iniFilePath.c_str());
-	cvsVideoStreamingAddresses[11] = converterX.to_bytes(wcaReturn);
-
-	std::thread* threads[12] = { nullptr, };
-	std::string cvsVideoFileName;
-	for (int i = 0; i < 12; ++i)
+	sVideoStreamingAddresses = converterX.to_bytes(wcaReturn);
+	std::string sExcuteFolderPath;
+	sExcuteFolderPath.assign(excuteFolderPath.begin(), excuteFolderPath.end());
+	
+	std::string subVSA = sVideoStreamingAddresses.substr(4);
+	if (subVSA.compare("rtsp") != 0)
 	{
-		cvsVideoFileName = converterX.to_bytes(excuteFolderPath + std::to_wstring(i) + L".mp4");
-		threads[i] = new std::thread(VideoRecording, cvsVideoStreamingAddresses[i], cvsVideoFileName);
+		// sVideoStreamingAddresses = sExcuteFolderPath + sVideoStreamingAddresses;
 	}
 
-	for (int i = 0; i < 12; ++i)
+	GetPrivateProfileStringW(L"VideoLength", L"sec", L"", wcaReturn, 1024, iniFilePath.c_str());
+	// std::wstring wsVideoSecs = wcaReturn;
+	videoLengthSec = _wtoi(wcaReturn);
+
+	GetPrivateProfileStringW(L"ImageCaptureFrame", L"frame", L"", wcaReturn, 1024, iniFilePath.c_str());
+	int imageCaptureFrame = _wtoi(wcaReturn);
+
+	std::thread* threads = nullptr;
+	std::string sSaveVideoFolder;
+
+	sSaveVideoFolder.append(excuteFolderPath.begin(), excuteFolderPath.end());
+	isRecording = true;
+	threads = new std::thread(VideoRecording, sVideoStreamingAddresses, sSaveVideoFolder, videoLengthSec, imageCaptureFrame);
+
+	int keyCommand = 0;
+
+	while (true)
 	{
-		threads[i]->join();
+		if (isRecording == false) break;
+		std::cin >> keyCommand;
+
+		if (keyCommand == 1)
+		{
+			isRecording = false;
+			break;
+		}
 	}
+
+	threads->join();
+
+	std::cout << "프로그램 종료\n";
 }
 
-void VideoRecording(cv::String cvsVSA, cv::String cvsVFN)
+void VideoRecording(std::string _sVSA, std::string _sVFN, int _videoLengthSec, int _ICF)
 {
 	cv::VideoCapture* videoCapture = nullptr;
 	cv::VideoWriter* videoWriters = nullptr;
 	cv::Mat* mats = nullptr;
 
-	float videoFPS = 0.f;
+	float videoFPSf = 0.f;
+	int videoFPSd = 0;
 	int videoWidth = 0;
 	int videoHeight = 0;
 
 	bool re = false;
-	videoCapture = new cv::VideoCapture(cvsVSA, cv::CAP_FFMPEG);
 
-	videoFPS = videoCapture->get(cv::CAP_PROP_FPS);
+	std::cout << "비디오 녹화 시작\n";
+
+	videoCapture = new cv::VideoCapture(_sVSA, cv::CAP_FFMPEG);
+
+	videoFPSf = videoCapture->get(cv::CAP_PROP_FPS);
+	videoFPSd = static_cast<int>(videoFPSf + 0.5f);
 	videoWidth = videoCapture->get(cv::CAP_PROP_FRAME_WIDTH);
 	videoHeight = videoCapture->get(cv::CAP_PROP_FRAME_HEIGHT);
 
 	videoWriters = new cv::VideoWriter;
 
 	re = videoWriters->open(
-		cvsVFN,
+		_sVFN + "0.mp4",
 		cv::VideoWriter::fourcc('m', 'p', '4', 'v'),
-		videoFPS,
+		static_cast<double>(_ICF),
 		cv::Size(videoWidth, videoHeight),
 		true);
 
 	mats = new cv::Mat();
 
-	for (int count = 0; count < videoFPS * 10; ++count)
+	int frameCount = 0;
+	int fileCount = 1;
+
+	while (true)
 	{
+		if (isRecording == false) break;
+		if ((frameCount != 0) && ((frameCount % (videoFPSd * 60 * 60)) == 0))
+		{
+			std::cout << frameCount / (videoFPSd * 60 * 60) << "시간 녹화되었습니다.\n";
+		}
+		
 		*videoCapture >> *mats;
-		*videoWriters << *mats;
+
+		if (frameCount % (videoFPSd / _ICF) == 0)
+		{
+			*videoWriters << *mats;
+		}
+
+		if ((frameCount != 0) && (frameCount % (videoFPSd * _videoLengthSec) == 0))
+		{
+			videoWriters->release();
+
+			re = videoWriters->open(
+				_sVFN + std::to_string(fileCount) + ".mp4",
+				cv::VideoWriter::fourcc('m', 'p', '4', 'v'),
+				static_cast<float>(videoFPSd),
+				cv::Size(videoWidth, videoHeight),
+				true);
+
+			fileCount++;
+
+			*videoWriters << *mats;
+		}
+
+		frameCount++;
 	}
 
 	videoCapture->release();
@@ -116,4 +151,7 @@ void VideoRecording(cv::String cvsVSA, cv::String cvsVFN)
 
 	mats->release();
 	mats = nullptr;
+
+	isRecording = false;
+	std::cout << "비디오 녹화 종료\n";
 }
