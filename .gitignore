@@ -44,3 +44,4 @@ Debug
 *.filters
 *.user
 *.vcxproj
+*.weights
