@@ -1,20 +1,124 @@
-﻿// Algorithm.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
-//
+﻿#include <iostream>
+#include <vector>
+#include <list>
+#include <stack>
 
-#include <iostream>
+#include "myVector.h"
+#include "MyList.h"
+
+using namespace std;
+
+void MyVectorCheck();
+void MyListCheck();
+
+template<typename T, typename Container = vector<T>>
+class Stack
+{
+public:
+    void push(const T& value)
+    {
+        _container.push_back(value);
+    }
+
+    /* 동작 성능과 예외 처리 관련 이슈가 있어 이렇게 설계하지 않음.
+    T pop()
+    {
+        T ret = _data[_size - 1];
+        _size--;
+        return ret; // T(const T&)
+    }
+    */
+
+    void pop()
+    {
+        _container.pop_back();
+    }
+
+    T& top()
+    {
+        return _container.back();
+    }
+
+    bool empty() { return _container.empty(); }
+    int size() { return _container.size(); }
+
+private:
+    // vector<T> _container;
+    Container _container;
+};
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    Stack<int, list<int>> s;
+
+    // 삽입
+    s.push(1);
+    s.push(2);
+    s.push(3);
+
+    // 비었나?
+    while (s.empty() == false)
+    {
+        // 최상위 원소
+        int data = s.top();
+
+        // 최상위 원소 삭제
+        s.pop();
+
+        cout << data << endl;
+    }
+
+    int size = s.size();
 }
 
-// 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴
-// 프로그램 디버그: <F5> 키 또는 [디버그] > [디버깅 시작] 메뉴
+void MyVectorCheck()
+{
+    // vector
+    // - push_back O(1)
+    // - push_front O(N)
 
-// 시작을 위한 팁: 
-//   1. [솔루션 탐색기] 창을 사용하여 파일을 추가/관리합니다.
-//   2. [팀 탐색기] 창을 사용하여 소스 제어에 연결합니다.
-//   3. [출력] 창을 사용하여 빌드 출력 및 기타 메시지를 확인합니다.
-//   4. [오류 목록] 창을 사용하여 오류를 봅니다.
-//   5. [프로젝트] > [새 항목 추가]로 이동하여 새 코드 파일을 만들거나, [프로젝트] > [기존 항목 추가]로 이동하여 기존 코드 파일을 프로젝트에 추가합니다.
-//   6. 나중에 이 프로젝트를 다시 열려면 [파일] > [열기] > [프로젝트]로 이동하고 .sln 파일을 선택합니다.
+    Vector<int> v;
+
+    v.reserve(100);
+    cout << v.size() << " " << v.capacity() << endl;
+
+    for (int i = 0; i < 101; ++i)
+    {
+        v.push_back(i);
+        cout << v[i] << " " << v.size() << " " << v.capacity() << endl;
+    }
+
+    v.resize(10);
+    cout << v.size() << " " << v.capacity() << endl;
+
+    v.clear();
+    cout << v.size() << " " << v.capacity() << endl;
+}
+
+void MyListCheck()
+{
+    List<int> li;
+
+    List<int>::iterator eraselt;
+
+    for (int i = 0; i < 10; ++i)
+    {
+        if (i == 5)
+        {
+            eraselt = li.insert(li.end(), i);
+        }
+        else
+        {
+            li.push_back(i);
+        }
+    }
+
+    li.pop_back();
+
+    li.erase(eraselt);
+
+    for (auto it = li.begin(); it != li.end(); it++)
+    {
+        cout << (*it) << endl;
+    }
+}
