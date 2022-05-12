@@ -2,73 +2,23 @@
 #include <vector>
 #include <list>
 #include <stack>
+#include <queue>
 
 #include "myVector.h"
 #include "MyList.h"
+#include "MyStack.h"
+#include "MyQueue.h"
 
 using namespace std;
 
 void MyVectorCheck();
 void MyListCheck();
-
-template<typename T, typename Container = vector<T>>
-class Stack
-{
-public:
-    void push(const T& value)
-    {
-        _container.push_back(value);
-    }
-
-    /* 동작 성능과 예외 처리 관련 이슈가 있어 이렇게 설계하지 않음.
-    T pop()
-    {
-        T ret = _data[_size - 1];
-        _size--;
-        return ret; // T(const T&)
-    }
-    */
-
-    void pop()
-    {
-        _container.pop_back();
-    }
-
-    T& top()
-    {
-        return _container.back();
-    }
-
-    bool empty() { return _container.empty(); }
-    int size() { return _container.size(); }
-
-private:
-    // vector<T> _container;
-    Container _container;
-};
+void MyStackCheck();
+void MyQueueCheck();
 
 int main()
 {
-    Stack<int, list<int>> s;
-
-    // 삽입
-    s.push(1);
-    s.push(2);
-    s.push(3);
-
-    // 비었나?
-    while (s.empty() == false)
-    {
-        // 최상위 원소
-        int data = s.top();
-
-        // 최상위 원소 삭제
-        s.pop();
-
-        cout << data << endl;
-    }
-
-    int size = s.size();
+    
 }
 
 void MyVectorCheck()
@@ -121,4 +71,45 @@ void MyListCheck()
     {
         cout << (*it) << endl;
     }
+}
+
+void MyStackCheck()
+{
+    Stack<int, list<int>> s;
+
+    // 삽입
+    s.push(1);
+    s.push(2);
+    s.push(3);
+
+    // 비었나?
+    while (s.empty() == false)
+    {
+        // 최상위 원소
+        int data = s.top();
+
+        // 최상위 원소 삭제
+        s.pop();
+
+        cout << data << endl;
+    }
+
+    int size = s.size();
+}
+
+void MyQueueCheck()
+{
+    ArrayQueue<int> q;
+
+    for (int i = 0; i < 100; ++i)
+        q.push(i);
+
+    while (q.empty() == false)
+    {
+        int value = q.front();
+        q.pop();
+        cout << value << endl;
+    }
+
+    int size = q.size();
 }
