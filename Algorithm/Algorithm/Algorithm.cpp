@@ -8,6 +8,7 @@
 #include "MyList.h"
 #include "MyStack.h"
 #include "MyQueue.h"
+#include "DFSnBFS.h"
 
 using namespace std;
 
@@ -18,125 +19,90 @@ void MyQueueCheck();
 void CreateGraph_1();
 void CreateGraph_2();
 void CreateGraph_3();
-void Dfs(int here);
-void DfsAll();
-
-// DFS (Depth First Search) 깊이 우선 탐색
-// BFS (Breadth First Search) 너비 우선 탐색
-
-struct Vertex
-{
-    // int data;
-};
+void DfsCheck();
+void BfsCheck();
 
 vector<Vertex> vertices;
-vector<vector<int>> adjacent;
-vector<bool> discovered;
+vector<vector<int>> adjacent; // 인접 행렬
 
-void CreateGraph()
+void CreateWeightsGraph()
 {
     vertices.resize(6);
-    adjacent = vector<vector<int>>(6);
-
-    /* 인접 리스트 version
-    adjacent[0].push_back(1);
-    adjacent[0].push_back(3);
-    adjacent[1].push_back(0);
-    adjacent[1].push_back(2);
-    adjacent[1].push_back(3);
-    adjacent[3].push_back(4);
-    adjacent[5].push_back(4);*/
-
-    // 인접 행렬 version
-    adjacent = vector<vector<int>>
-    {
-        { 0, 1, 0, 1, 0, 0 },
-        { 1, 0, 1, 1, 0, 0 },
-        { 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 1, 0 },
-        { 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 0, 0 },
-        { 0, 0, 0, 0, 1, 0 }
-    };
+    adjacent = vector<vector<int>>(6, vector<int>(6, -1));
+    adjacent[0][1] = 15;
+    adjacent[0][3] = 35;
+    adjacent[1][0] = 15;
+    adjacent[1][2] = 5;
+    adjacent[1][3] = 10;
+    adjacent[3][4] = 5;
+    adjacent[5][4] = 5;
 }
 
-void Bfs(int here)
+void Dijikstra(int here)
 {
-    // 누구에 의해 발견 되었는지?
+    struct VertexCost
+    {
+        int vertex;
+        int cost;
+    };
+
+    list<VertexCost> discovered; // 발견 목록
+    vector<int> best(6, INT32_MAX); // 각 정점별로 지금까지 발견한 최소 거리
     vector<int> parent(6, -1);
-    // 시작점에서 얼만큼 떨어져 있는지?
-    vector<int> distance(6, -1);
 
-    queue<int> q;
-    q.push(here);
-    discovered[here] = true;
+    discovered.push_back(VertexCost{ here, 0 });
+    best[here] = 0;
     parent[here] = here;
-    distance[here] = 0;
 
-    /* 인접 리스트 version
-    while (q.empty() == false)
+    while (discovered.empty() == false)
     {
-        here = q.front();
-        q.pop();
+        // 제일 좋은 후보를 찾는다
+        list<VertexCost>::iterator bestIt;
+        int bestCost = INT32_MAX;
 
-        cout << "Visited : " << here << endl;
-
-        for (int there : adjacent[here])
+        for (auto it = discovered.begin(); it != discovered.end(); ++it)
         {
-            if (discovered[there])
-                continue;
-
-            q.push(there);
-            discovered[there] = true;
-
-            parent[there] = here;
-            distance[there] = distance[here] + 1;
+            if (it->cost < bestCost)
+            {
+                bestCost = it->cost;
+                bestIt = it;
+            }
         }
-    }*/
 
-    // 인접 행렬 version
-    while (q.empty() == false)
-    {
-        here = q.front();
-        q.pop();
+        int cost = bestIt->cost;
+        here = bestIt->vertex;
+        discovered.erase(bestIt);
 
-        cout << "Visited : " << here << endl;
+        // 방문? 더 짧은 경로를 뒤늦게 찾았다면 스킵.
+        if (best[here] < cost)
+            continue;
 
+        // 방문!
         for (int there = 0; there < 6; ++there)
         {
-            if (adjacent[here][there] == 0)
+            // 연결되지 않았으면 스킵.
+            if (adjacent[here][there] == -1)
                 continue;
 
-            if (discovered[there])
+            // 더 좋은 경로를 과거에 찾았으면 스킵.
+            int nextCost = best[here] + adjacent[here][there];
+            if (nextCost >= best[there])
                 continue;
 
-            q.push(there);
-            discovered[there] = true;
-
+            discovered.push_back(VertexCost{ there, nextCost });
+            best[there] = nextCost;
             parent[there] = here;
-            distance[there] = distance[here] + 1;
         }
     }
-    
-    int a = 3;
-}
 
-void BfsAll()
-{
-    for (int i = 0; i < 6; ++i)
-    {
-        if (discovered[i] == false)
-            Bfs(i);
-    }
+    int a = 3;
 }
 
 int main()
 {
-    CreateGraph();
-
-    discovered = vector<bool>(6, false);
-
-    BfsAll();
+    CreateWeightsGraph();
+       
+    Dijikstra(0);
 }
 
 void MyVectorCheck()
@@ -348,39 +314,21 @@ void CreateGraph_3()
     adjacent2[0][3];
 }
 
-void Dfs(int here, vector<bool>* visited)
+void DfsCheck()
 {
-    // 방문!
-    (*visited)[here] = true;
-    cout << "Visited : " << here << endl;
+    vector<vector<int>> adjacent;
+    CreateGraph(&adjacent);
 
-    /* 인접 리스트 version
-    모든 인접 정점을 순회한다
-    for (int i = 0; i < adjacent[here].size(); ++i)
-    {
-        int there = adjacent[here][i];
+    discovered = vector<bool>(6, false);
 
-        if (visited[there] == false)
-            Dfs(there);
-    }*/
-
-    // 인접 행렬 version
-    for (int there = 0; there < 6; ++there)
-    {
-        if (adjacent[here][there] == 0)
-            continue;
-
-        // 아직 방문하지 않은 곳이 있으면 방문한다
-        if ((*visited)[there] == false)
-            Dfs(there, visited);
-    }
+    DfsAll(&adjacent);
 }
 
-void DfsAll()
+void BfsCheck()
 {
-    vector<bool> visited = vector<bool>(6, false);
+    CreateGraph(&adjacent);
 
-    for (int i = 0; i < 6; ++i)
-        if (visited[i] == false)
-            Dfs(i, &visited);
+    discovered = vector<bool>(6, false);
+
+    BfsAll(&adjacent);
 }
