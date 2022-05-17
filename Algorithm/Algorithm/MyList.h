@@ -1,22 +1,22 @@
 #pragma once
 
 template<typename T>
-class Node
+class LNode
 {
 public:
-    Node() : _prev(nullptr), _next(nullptr), _data(T())
+    LNode() : _prev(nullptr), _next(nullptr), _data(T())
     {
 
     }
 
-    Node(const T& value) : _prev(nullptr), _next(nullptr), _data(value)
+    LNode(const T& value) : _prev(nullptr), _next(nullptr), _data(value)
     {
 
     }
 
 public:
-    Node* _prev;
-    Node* _next;
+    LNode* _prev;
+    LNode* _next;
     T       _data;
 };
 
@@ -29,7 +29,7 @@ public:
 
     }
 
-    Iterator(Node<T>* node) : _node(node)
+    Iterator(LNode<T>* node) : _node(node)
     {
 
     }
@@ -81,7 +81,7 @@ public:
     }
 
 public:
-    Node<T>* _node;
+    LNode<T>* _node;
 };
 
 template<typename T>
@@ -90,8 +90,8 @@ class List
 public:
     List() : _size(0)
     {
-        _head = new Node<T>();
-        _tail = new Node<T>();
+        _head = new LNode<T>();
+        _tail = new LNode<T>();
         _head->_next = _tail;
         _tail->_prev = _head;
     }
@@ -116,10 +116,10 @@ public:
     }
 
 private:
-    Node<T>* AddNode(Node<T>* before, const T& value)
+    LNode<T>* AddNode(LNode<T>* before, const T& value)
     {
-        Node<T>* newNode = new Node<T>(value);
-        Node<T>* preNode = before->_prev;
+        LNode<T>* newNode = new LNode<T>(value);
+        LNode<T>* preNode = before->_prev;
 
         preNode->_next = newNode;
         newNode->_prev = preNode;
@@ -132,10 +132,10 @@ private:
         return newNode;
     }
 
-    Node<T>* RemoveNode(Node<T>* node)
+    LNode<T>* RemoveNode(LNode<T>* node)
     {
-        Node<T>* preNode = node->_prev;
-        Node<T>* nextNode = node->_next;
+        LNode<T>* preNode = node->_prev;
+        LNode<T>* nextNode = node->_next;
 
         preNode->_next = nextNode;
         nextNode->_prev = preNode;
@@ -156,18 +156,18 @@ public:
     // it '앞에' 추가
     iterator insert(iterator it, const T& value)
     {
-        Node<T>* node = AddNode(it._node, value);
+        LNode<T>* node = AddNode(it._node, value);
         return iterator(node);
     }
 
     iterator erase(iterator it)
     {
-        Node<T>* node = RemoveNode(it._node);
+        LNode<T>* node = RemoveNode(it._node);
         return iterator(node);
     }
 
 private:
-    Node<T>* _head;
-    Node<T>* _tail;
+    LNode<T>* _head;
+    LNode<T>* _tail;
     int         _size;
 };
