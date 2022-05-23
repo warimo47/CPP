@@ -2,23 +2,23 @@
 
 struct BSTNode
 {
-	BSTNode*	parants = nullptr;
+	BSTNode*	parents = nullptr;
 	BSTNode*	left = nullptr;
 	BSTNode*	right = nullptr;
-	int			value = 0;
+	int			key = {};
 };
 
 class BinarySearchTree
 {
 public:
-	void PrintAll();
+	void PrintTree();
 	void PrintNode(int step, BSTNode* node);
 
-	void Insert(int value);
-	void Delete(int value);
+	void Insert(int key);
+	void Delete(int key);
 
 private:
-	BSTNode* root = nullptr;
+	BSTNode* _root = nullptr;
 
 };
 

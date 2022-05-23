@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-void BinarySearchTree::PrintAll()
+void BinarySearchTree::PrintTree()
 {
-	PrintNode(0, root);
+	PrintNode(0, _root);
 }
 
 void BinarySearchTree::PrintNode(int step, BSTNode* node)
@@ -21,46 +21,46 @@ void BinarySearchTree::PrintNode(int step, BSTNode* node)
 	}
 
 	std::cout.width(4);
-	std::cout << node->value << std::endl;
+	std::cout << node->key << std::endl;
 
 	PrintNode(step + 1, node->right);
 }
 
-void BinarySearchTree::Insert(int value)
+void BinarySearchTree::Insert(int key)
 {
 	BSTNode* newNode = new BSTNode();
-	newNode->value = value;
+	newNode->key = key;
 
-	if (root == nullptr)
+	if (_root == nullptr)
 	{
-		newNode->parants = newNode;
-		root = newNode;
+		// newNode->parents = newNode;
+		_root = newNode;
 		return;
 	}
 
-	BSTNode* parants = root;
-	BSTNode* node = root;
+	BSTNode* parents = nullptr;
+	BSTNode* node = _root;
 
 	while (node)
 	{
-		parants = node;
+		parents = node;
 
-		if (node->value == value)
+		if (node->key == key)
 			break;
-		else if (node->value < value)
+		else if (node->key < key)
 			node = node->right;
 		else
 			node = node->left;
 	}
 
-	newNode->parants = parants;
-	if (parants->value < value)
-		parants->right = newNode;
+	newNode->parents = parents;
+	if (parents->key < key)
+		parents->right = newNode;
 	else
-		parants->left = newNode;
+		parents->left = newNode;
 }
 
-void BinarySearchTree::Delete(int value)
+void BinarySearchTree::Delete(int key)
 {
 
 }
