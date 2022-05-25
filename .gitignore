@@ -38,10 +38,4 @@ Debug
 .vs
 
 # Files
-*.vcxproj
-*.filters
-*.user
-*.filters
-*.user
-*.vcxproj
 *.weights
