@@ -14,6 +14,7 @@
 #include "MyPriorityQueue.h"
 #include "MyBinarySearch.h"
 #include "BinarySearchTree.h"
+#include "RedBlackTree.h"
 
 using namespace std;
 
@@ -29,26 +30,27 @@ void BfsCheck();
 void DijikstraCheck();
 void TreeCheck();
 void PriorityQueueCheck();
+void BSTCheck();
 
 int main()
 {
-    BinarySearchTree bst;
+    RedBlackTree rbt;
 
-    bst.Insert(20);
-    bst.Insert(10);
-    bst.Insert(26);
-    bst.Insert(25); 
-    bst.Insert(40);
-    bst.Insert(30);
-    bst.Insert(50);
+    rbt.Insert(20);
+    rbt.Insert(10);
+    rbt.Insert(26);
+    rbt.Insert(25);
+    rbt.Insert(40);
+    rbt.Insert(30);
+    rbt.Insert(50);
 
-    bst.PrintTree();
+    rbt.PrintTree();
 
     cout << endl << endl;
 
-    bst.Delete(26);
+    rbt.Delete(26);
 
-    bst.PrintTree();
+    rbt.PrintTree();
 }
 
 void MyVectorCheck()
@@ -312,4 +314,25 @@ void PriorityQueueCheck()
 
         cout << value << endl;
     }
+}
+
+void BSTCheck()
+{
+    BinarySearchTree bst;
+
+    bst.Insert(20);
+    bst.Insert(10);
+    bst.Insert(26);
+    bst.Insert(25);
+    bst.Insert(40);
+    bst.Insert(30);
+    bst.Insert(50);
+
+    bst.PrintTree();
+
+    cout << endl << endl;
+
+    bst.Delete(26);
+
+    bst.PrintTree();
 }
