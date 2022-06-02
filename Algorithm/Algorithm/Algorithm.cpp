@@ -31,26 +31,14 @@ void DijikstraCheck();
 void TreeCheck();
 void PriorityQueueCheck();
 void BSTCheck();
+void RBTCheck();
+void BubbleSort(vector<int>& v);
+void SelectionSort(vector<int>& v);
+void InsertionSort(vector<int>& v);
 
 int main()
 {
-    RedBlackTree rbt;
-
-    rbt.Insert(20);
-    rbt.Insert(10);
-    rbt.Insert(26);
-    rbt.Insert(25);
-    rbt.Insert(40);
-    rbt.Insert(30);
-    rbt.Insert(50);
-
-    rbt.PrintTree();
-
-    cout << endl << endl;
-
-    rbt.Delete(26);
-
-    rbt.PrintTree();
+    RBTCheck();
 }
 
 void MyVectorCheck()
@@ -335,4 +323,84 @@ void BSTCheck()
     bst.Delete(26);
 
     bst.PrintTree();
+}
+
+void RBTCheck()
+{
+    RedBlackTree rbt;
+
+    rbt.Insert(20);
+    rbt.Insert(10);
+    rbt.Insert(26);
+    rbt.Insert(25);
+    rbt.Insert(40);
+    rbt.Insert(30);
+    rbt.Insert(50);
+
+    rbt.PrintTree();
+
+    cout << endl << endl;
+
+    rbt.Delete(26);
+
+    rbt.PrintTree();
+}
+
+void BubbleSort(vector<int>& v)
+{
+    const int n = (int)v.size();
+
+    for (int i = 0; i < n - 1; ++i)
+    {
+        for (int j = 0; j < (n - 1 - i); ++j)
+        {
+            if (v[j] > v[i + 1])
+            {
+                int temp = v[j];
+                v[j] = v[i + 1];
+                v[i + 1] = temp;
+            }
+        }
+    }
+}
+
+void SelectionSort(vector<int>& v)
+{
+    const int n = (int)v.size();
+
+    for (int i = 0; i < n - 1; ++i)
+    {
+        int bestIdx = i;
+
+        for (int j = i + 1; j < n; ++j)
+        {
+            if (v[j] < v[bestIdx])
+                bestIdx = j;
+        }
+
+        // 교환
+        int temp = v[i];
+        v[i] = v[bestIdx];
+        v[bestIdx] = temp;
+    }
+}
+
+void InsertionSort(vector<int>& v)
+{
+    const int n = (int)v.size();
+
+    for (int i = 1; i < n; ++i)
+    {
+        int insertData = v[i];
+        int j;
+        for (j = i - 1; j >= 0; --j)
+        {
+            if (v[j] > insertData)
+                v[j + 1] = v[j];
+            else
+                break;
+        }
+
+        v[j + 1] = insertData;
+    }
 }
